@@ -10,7 +10,7 @@ if ! grep -q "^APP_KEY=" .env || [ -z "$(php artisan key:env)" ]; then
 fi
 
 # Esperar a que MariaDB esté disponible
-until mysql -hmariadb -utalleruser -ptallerpass -e 'select 1' taller; do
+until mysql -hmariadb -utalleruser -ptallerpass --skip-ssl -e 'select 1' taller; do
   echo "Esperando a que MariaDB esté listo..."
   sleep 2
 done

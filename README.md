@@ -1,6 +1,6 @@
 # Taller App
 
-Aplicación Fullstack para la gestión de un taller mecánico, desarrollada con **Laravel** (backend/API RESTful) y **Angular** (frontend SPA). El despliegue está totalmente dockerizado y preparado para producción en un servidor Linux (por ejemplo, AWS EC2), usando nginx-proxy y Let's Encrypt para HTTPS. El frontend es el único punto público, y el backend solo es accesible internamente por Docker.
+Aplicación Fullstack para la gestión de un taller mecánico, desarrollada con **Laravel** (backend/API RESTful) y **Angular** (frontend SPA). La aplicación está completamente dockerizada para facilitar el desarrollo local.
 
 ## Características principales
 
@@ -11,28 +11,35 @@ Aplicación Fullstack para la gestión de un taller mecánico, desarrollada con 
   - Seeder que crea un usuario administrador por defecto (`admin@example.com` / `password`).
   - Gestión de relaciones entre entidades.
   - CORS abierto para permitir acceso desde el frontend.
-  - El backend NO es accesible directamente desde Internet, solo desde la red interna de Docker.
 
 - **Frontend Angular**
   - SPA moderna y responsiva.
   - Login y registro de usuarios.
   - Panel de administración para gestionar mecánicos, clientes, vehículos, reparaciones y piezas.
-  - Todas las llamadas a la API se hacen vía `/api` (proxy nginx), evitando problemas de CORS y mixed content.
-  - Manejo de errores y validaciones.
+  - Todas las llamadas a la API se hacen vía `/api` (proxy nginx), evitando problemas de CORS.
 
-- **Docker & DevOps**
-  - Contenedores para backend (Laravel+Apache), frontend (Angular+nginx), base de datos (MariaDB), phpMyAdmin, nginx-proxy y acme-companion (Let's Encrypt).
-  - nginx-proxy gestiona el dominio público y el certificado SSL automáticamente.
-  - El backend solo es visible para el frontend y otros servicios internos.
-  - Seguridad reforzada: solo los puertos 80/443 están abiertos en el firewall/SG de AWS.
+- **Docker & Desarrollo Local**
+  - Contenedores para backend (Laravel+Apache), frontend (Angular+nginx), y base de datos (MariaDB).
+  - phpMyAdmin disponible en `http://localhost:8080` para administración de la BD.
+  - Configuración lista para iniciar con un comando.
 
-## Despliegue en producción (resumen de lo realizado)
+## Despliegue en desarrollo local
 
-- Se desplegó en una instancia EC2 de AWS (Ubuntu), abriendo solo los puertos 22 (SSH), 80 y 443.
-- Se configuró `docker-compose.yml` para que solo el frontend sea público, y el backend solo accesible por la red interna de Docker.
-- nginx-proxy y acme-companion gestionan el dominio y el certificado SSL de Let's Encrypt.
-- El frontend expone el dominio público (por ejemplo, `https://tallermatehtorres.zapto.org`), y todas las peticiones `/api` se redirigen internamente al backend.
-- El backend ejecuta migraciones y seeders automáticamente al iniciar el contenedor.
+1. Clona el repositorio.
+2. Copia el archivo `.env.example` a `.env` en la carpeta `backend/`:
+   ```sh
+   cp backend/.env.example backend/.env
+   ```
+3. Ejecuta los contenedores:
+   ```sh
+   docker-compose up -d --build
+   ```
+4. Accede a la aplicación:
+   - **Frontend**: http://localhost
+   - **phpMyAdmin**: http://localhost:8080 (usuario: `root`, contraseña: `root`)
+5. Inicia sesión con las credenciales por defecto:
+   - **Usuario**: `admin@example.com`
+   - **Contraseña**: `password`
 
 ## Estructura del proyecto
 
@@ -62,23 +69,9 @@ taller_app/
    ```
 3. Accede al frontend en `http://localhost` (o el dominio configurado).
 
-## Despliegue en servidor (producción)
-
-1. Sube el proyecto a tu servidor (por ejemplo, EC2 Ubuntu).
-2. Configura tu dominio y apunta el DNS a la IP pública del servidor.
-3. Ajusta el archivo `.env` en `backend/` para producción (DB, mail, etc).
-4. Ejecuta:
-   ```sh
-   docker-compose up -d --build
-   ```
-5. nginx-proxy y acme-companion gestionarán el certificado SSL automáticamente.
-6. El frontend será accesible por HTTPS y todas las llamadas a `/api` funcionarán de forma segura.
-
 ## Seguridad
-- Solo el frontend es público.
-- El backend y la base de datos solo son accesibles internamente.
-- Certificados SSL automáticos con Let's Encrypt.
-- Firewall/Security Group solo permite 22, 80 y 443.
+- Backend y base de datos accesibles internamente dentro de la red Docker.
+- phpMyAdmin disponible localmente para desarrollo.
 
 ---
 
