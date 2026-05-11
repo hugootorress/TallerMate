@@ -1,4 +1,4 @@
-# Taller App
+# TallerMate
 
 Aplicación Fullstack para la gestión de un taller mecánico, desarrollada con **Laravel** (backend/API RESTful) y **Angular** (frontend SPA). La aplicación está completamente dockerizada para facilitar el desarrollo local.
 
